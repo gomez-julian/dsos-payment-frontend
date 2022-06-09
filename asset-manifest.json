@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/dsos-payment-frontend/static/css/main.e5b429e5.chunk.css",
+    "main.js": "/dsos-payment-frontend/static/js/main.c6fa515f.chunk.js",
+    "main.js.map": "/dsos-payment-frontend/static/js/main.c6fa515f.chunk.js.map",
+    "runtime~main.js": "/dsos-payment-frontend/static/js/runtime~main.62e180ea.js",
+    "runtime~main.js.map": "/dsos-payment-frontend/static/js/runtime~main.62e180ea.js.map",
+    "static/js/2.9b7db4db.chunk.js": "/dsos-payment-frontend/static/js/2.9b7db4db.chunk.js",
+    "static/js/2.9b7db4db.chunk.js.map": "/dsos-payment-frontend/static/js/2.9b7db4db.chunk.js.map",
+    "index.html": "/dsos-payment-frontend/index.html",
+    "precache-manifest.ff4da2167337759e48cd7c869bdd5dee.js": "/dsos-payment-frontend/precache-manifest.ff4da2167337759e48cd7c869bdd5dee.js",
+    "service-worker.js": "/dsos-payment-frontend/service-worker.js",
+    "static/css/main.e5b429e5.chunk.css.map": "/dsos-payment-frontend/static/css/main.e5b429e5.chunk.css.map"
+  }
+}
