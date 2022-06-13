@@ -1,6 +1,11 @@
-const Local = 'http://localhost:8080/api/payment/'
-const Development = 'https://payment-development.herokuapp.com/api/payment/'
+const Payment = {
+    local: 'http://localhost:8080/api/payment/',
+    develop: 'https://payment-development.herokuapp.com/api/payment/'
+}
 
-const Host = Development
+const Host = {
+    purchases : 'https://compras-develop.herokuapp.com/api/compras/',
+    payment : Payment.develop
+}
 
 export { Host }
