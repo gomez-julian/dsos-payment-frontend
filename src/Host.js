@@ -5,7 +5,8 @@ const Payment = {
 
 const Host = {
     purchases : 'https://compras-develop.herokuapp.com/api/compras/',
-    payment : Payment.develop
+    payment : Payment.develop,
+    sales : 'https://ventas-it-d.herokuapp.com/api/venta'
 }
 
 export { Host }

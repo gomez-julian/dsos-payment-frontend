@@ -5,7 +5,7 @@ import { SummaryItem } from "./SummaryItem";
 import { EmptyCart } from "./EmptyCart";
 
 export const Summary = (props) => {
-  const {data, cart, setCart} = props
+  const {cart, setCart} = props
 
   React.useEffect(() => console.log('Renderizando Summary...'))
 

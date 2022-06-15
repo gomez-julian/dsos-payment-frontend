@@ -5,6 +5,7 @@ import { ProductCard } from "./components/ProductCard";
 import { Error404 } from "./components/Error404";
 
 export const Products = (props) => {
+  
   const { products, cart, setCart } = props;
 
   React.useEffect(() => console.log("Renderizando Products..." + typeof products));
@@ -25,7 +26,7 @@ export const Products = (props) => {
           </div>
         </div>
         <div className="row">
-          { ! isEmpty() ? (
+          { ! isEmpty()  ? (
             products.map((data) => (
               <ProductCard data={data} key={data.idProducto} cart={cart} setCart={setCart}/>
             ))

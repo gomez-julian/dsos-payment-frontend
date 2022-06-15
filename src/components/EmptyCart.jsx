@@ -58,7 +58,7 @@ export const EmptyCart = () => {
     <path d="M736,577 C737.65825,577 739,578.34175 739,580 C739,578.34175 740.34175,577 742,577 C740.34175,577 739,575.65825 739,574 C739,575.65825 737.65825,577 736,577 Z" id="bubble-rounded" stroke="#3CBC83" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none"></path>
 </svg>
 
-<h3>Tu carrito de compras sigue vacío 🙁</h3>
+<h3>Tu carrito de compras sigue vacío <span role="img" aria-label="emoji truste">🙁</span></h3>
 <p>Regresa a nuestro catálogo para empezar a comprar.</p>
 </div>
   );

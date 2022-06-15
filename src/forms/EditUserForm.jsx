@@ -2,19 +2,6 @@ import React, { useState, useEffect } from 'react'
 import "../styles/bootstrap.min.css"
 
 
-const data = {
-  paymentID: 1,
-  referenceID: "929184819",
-  address_cp: null,
-  paymentDate: "2022-06-03T13:56:36.625563",
-  paymentStatus: "C",
-  positivePaymentDate: "2022-06-03T17:43:23.579216",
-  paymentAmount: 891,
-  paymentMethod: "4718343217000000",
-  statusDelete: null,
-};
-
-
 const EditUserForm = props => {
   const [ user, setUser ] = useState(props.currentUser)
 
