@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/dsos-payment-frontend/static/css/main.92a63743.chunk.css",
-    "main.js": "/dsos-payment-frontend/static/js/main.4414c912.chunk.js",
-    "main.js.map": "/dsos-payment-frontend/static/js/main.4414c912.chunk.js.map",
+    "main.css": "/dsos-payment-frontend/static/css/main.967f9c85.chunk.css",
+    "main.js": "/dsos-payment-frontend/static/js/main.75e7d23d.chunk.js",
+    "main.js.map": "/dsos-payment-frontend/static/js/main.75e7d23d.chunk.js.map",
     "runtime~main.js": "/dsos-payment-frontend/static/js/runtime~main.62e180ea.js",
     "runtime~main.js.map": "/dsos-payment-frontend/static/js/runtime~main.62e180ea.js.map",
-    "static/js/2.aeadeb46.chunk.js": "/dsos-payment-frontend/static/js/2.aeadeb46.chunk.js",
-    "static/js/2.aeadeb46.chunk.js.map": "/dsos-payment-frontend/static/js/2.aeadeb46.chunk.js.map",
+    "static/js/2.80acbcc0.chunk.js": "/dsos-payment-frontend/static/js/2.80acbcc0.chunk.js",
+    "static/js/2.80acbcc0.chunk.js.map": "/dsos-payment-frontend/static/js/2.80acbcc0.chunk.js.map",
     "index.html": "/dsos-payment-frontend/index.html",
-    "precache-manifest.6e2e0fc42052ea3acec587717f64db17.js": "/dsos-payment-frontend/precache-manifest.6e2e0fc42052ea3acec587717f64db17.js",
+    "precache-manifest.f49b336dc0c4a9025f9745cbfd3195b1.js": "/dsos-payment-frontend/precache-manifest.f49b336dc0c4a9025f9745cbfd3195b1.js",
     "service-worker.js": "/dsos-payment-frontend/service-worker.js",
-    "static/css/main.92a63743.chunk.css.map": "/dsos-payment-frontend/static/css/main.92a63743.chunk.css.map"
+    "static/css/main.967f9c85.chunk.css.map": "/dsos-payment-frontend/static/css/main.967f9c85.chunk.css.map"
   }
 }
