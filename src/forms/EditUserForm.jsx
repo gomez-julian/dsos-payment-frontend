@@ -2,21 +2,16 @@ import React, { useState, useEffect } from 'react'
 import "../styles/bootstrap.min.css"
 
 
-const EditUserForm = props => {
-  const [ user, setUser ] = useState(props.currentUser)
+const EditPaymentForm = props => {
+  const [ payment, setPayment ] = useState(props.currentPayment)
 
-  useEffect(
-    () => {
-      setUser(props.currentUser)
-    },
-    [ props ]
-  )
-  // You can tell React to skip applying an effect if certain values haven’t changed between re-renders. [ props ]
-
+  useEffect(() => {
+      setPayment(props.currentPayment)
+    },[ props ])
   const handleInputChange = event => {
     const { name, value } = event.target
 
-    setUser({ ...user, [name]: value })
+    setPayment({ ...payment, [name]: value })
   }
 
   return (
@@ -27,25 +22,25 @@ const EditUserForm = props => {
       onSubmit={event => {
         event.preventDefault()
         
-        props.updateUser(user.paymentID, user)
+        props.updatePayment(payment.paymentID, payment)
       }}
     >
       <div className='row'>
 			<div className="md-form mb-2 col-lg-4">
 			<label>Referencia</label>
-      <input type="text" name="referenceID" value={user.referenceID} onChange={handleInputChange}
+      <input type="text" name="referenceID" value={payment.referenceID} onChange={handleInputChange}
 	  className="form-control validate" 
 	  autoComplete="off" />
       </div>
 	  <div className="md-form mb-2 col-lg-4">
 	  <label>Monto</label>
-      <input type="text" name="paymentAmount" value={user.paymentAmount} onChange={handleInputChange} 
+      <input type="text" name="paymentAmount" value={payment.paymentAmount} onChange={handleInputChange} 
 	  className="form-control validate" 
 	  autoComplete="off"/>
       </div>
 	  <div className="md-form mb-2 col-lg-4">
 	  <label>Tarjeta de pago</label>
-      <input type="text" name="paymentMethod" value={user.paymentMethod} onChange={handleInputChange}
+      <input type="text" name="paymentMethod" value={payment.paymentMethod} onChange={handleInputChange}
 	  className="form-control validate" 
 	  autoComplete="off" />
 	  </div>
@@ -61,4 +56,4 @@ const EditUserForm = props => {
   )
 }
 
-export default EditUserForm
+export default EditPaymentForm

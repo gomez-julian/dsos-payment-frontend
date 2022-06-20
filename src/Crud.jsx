@@ -3,6 +3,8 @@ import AddUserForm from "./forms/AddUserForm";
 import EditUserForm from "./forms/EditUserForm";
 import UserTable from "./tables/UserTable";
 import { Host } from "./Host";
+import { Fetch } from "./utilities/fetch";
+import { PaymentItem } from "./components/PaymentItem";
 
 const Crud = () => {
   // Data
@@ -53,100 +55,71 @@ const Crud = () => {
       });
   }, [setUsers]);
 
-  async function postData(data = {}) {
-    // Opciones por defecto estan marcadas con un *
-    const response = await fetch(Host + 'pay', {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(data) // body data type must match "Content-Type" header
-    });
-    return response.json(); // parses JSON response into native JavaScript objects
-  }
 
-  const deleteRow = async (paymentID, data) => {
-    const URI = Host + 'delete/' + paymentID
-    console.log(URI)
-    const response = await fetch(URI, {
-        method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
-        headers: {
-          'Content-Type': 'application/json'
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(data) // body data type must match "Content-Type" header
-      });
-      console.log(response.json())
-}
-
-const updateRow = async (paymentID, data) => {
-  const URI = Host + 'update/' + paymentID
-  console.log(URI)
-  const response = await fetch(URI, {
-      method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(data) // body data type must match "Content-Type" header
-    });
-    return response
-}
-
-  // CRUD operations
-  const addUser = async (user) => {
-    // user.paymentID = users.length + 1;
-    // setUsers([...users, user]);
-    console.log(user)
-    postData(user)
-  .then(data => {
-    console.log(data); // JSON data parsed by `data.json()` call
-    setUsers([...users, data]);
-  });
+  const addUser = async (data) => {
+    console.log(data)
+    Fetch(Host.payment + 'pay', 'POST', data).then(res => {
+      if(res.status === 201){return res.json()}else{return {}}
+  }).then(j => {
+    if (JSON.stringify(j).includes("paymentID")){
+      setUsers([...users, j]);
+    }
+  })
       
   };
 
   const deleteUser = (paymentID) => {
-    setEditing(false);
-    deleteRow(paymentID);
-    setUsers(users.filter((user) => user.paymentID !== paymentID));
+    Fetch(Host.payment + 'delete/' + paymentID, 'DELETE', {}).then(res => {
+      console.log(res)
+      if(res.status === 202){return res.json()}else{return {}}
+  }).then(j => {
+    if (JSON.stringify(j).includes("paymentID")){
+      setEditing(false);
+      setUsers(users.filter((user) => user.paymentID !== paymentID));
+    }
+  })
   };
 
   const updateUser = (paymentID, updatedPayment) => {
     setEditing(false);
     const body = Object.assign({}, updatedPayment)
     delete body.paymentID
-    console.log(body)
-    updateRow(paymentID,body).then(response => {
-      console.log(response.status);
-      console.log(response.json());  // JSON data parsed by `data.json()` call
-    });
-    setUsers(users.map((user) => (user.paymentID === paymentID ? updatedPayment : user)));
+    Fetch(Host.payment + 'update/' + paymentID, 'PUT', body).then(res => {
+      if(res.status === 202){return res.json()}else{return {}}
+  }).then(j => {
+    if (JSON.stringify(j).includes("paymentID")){
+      setUsers(users.map((user) => (user.paymentID === paymentID ? j : user)));
+    }
+  });
   };
+
+  const confirmPayment = (paymentID) => {
+    Fetch(Host.payment + 'confirm/' + paymentID, 'PUT', {}).then(res => {
+      if(res.status === 202){return res.json()}else{return {}}
+  }).then(j => {
+    if (JSON.stringify(j).includes("paymentID")){
+      setUsers(users.map((user) => (user.paymentID === paymentID ? j : user)));
+    }
+  });
+  }
+
+  const cancelPayment = (paymentID) => {
+    Fetch(Host.payment + 'cancel/' + paymentID, 'PUT', {}).then(res => {
+      if(res.status === 202){return res.json()}else{return {}}
+  }).then(j => {
+    if (JSON.stringify(j).includes("paymentID")){
+      setUsers(users.map((user) => (user.paymentID === paymentID ? j : user)));
+    }
+  });
+  }
 
   const editRow = (user) => {
     setEditing(true);
 
     setCurrentUser({
 		paymentID: user.paymentID,
+    saleID: user.saleID,
 		referenceID: user.referenceID,
-		address_cp: user.address_cp,
 		paymentDate: user.paymentDate,
 		paymentStatus: user.paymentStatus,
 		positivePaymentDate: user.positivePaymentDate,
@@ -177,9 +150,11 @@ const updateRow = async (paymentID, data) => {
           )}
         </div>
         <div className="flex-large">
-          <UserTable users={users} editRow={editRow} deleteUser={deleteUser} />
+          <UserTable users={users} editRow={editRow} deleteUser={deleteUser} 
+          confirmPayment={confirmPayment} cancelPayment={cancelPayment}/>
         </div>
       </div>
+      <PaymentItem />
     </div>
   );
 };

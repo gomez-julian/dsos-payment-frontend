@@ -3,7 +3,7 @@ import "../styles/bootstrap.min.css";
 import "../styles/ProductCard.css";
 
 export const ProductCard = (props) => {
-  const {data, cart, setCart} = props
+  const {data, cart, setCart, toast} = props
 
   React.useEffect(() => console.log('Renderizando ProductCard...'))
 
@@ -18,6 +18,7 @@ export const ProductCard = (props) => {
                 onClick={() => {
                   console.log('Agregando a carrito')
                   setCart([...cart, data])
+                  toast('Se agregó ' + data.marca + ' ' + data.modelo)
                 }}
               ></i>
             </li>

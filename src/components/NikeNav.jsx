@@ -2,11 +2,38 @@ import React from "react";
 import "../styles/bootstrap.min.css";
 import "../styles/NikeNav.css";
 import { Link } from 'react-router-dom';
+import { Fetch } from "../utilities/fetch";
+import { Host } from "../Host";
 
 export const NikeNav = (props) => {
-  const {cart} = props
+  const {cart, setShow, active, setActive} = props
+  const [user, setUser] = React.useState('Hola')
 
-  React.useEffect(() => console.log('Renderizando NikeNav...'))
+  React.useEffect(() => {
+    console.log('Renderizando NikeNav...');
+    const jwt = localStorage.getItem("jwt");
+    if(jwt !== null && jwt.length > 1){
+        Fetch(Host.auth.verify + jwt, 'POST', {}).then((r) => {
+            if (r.status === 200) {
+                setUser(localStorage.getItem("user"))
+                setActive(true)
+                console.log(jwt)
+            } else {
+              localStorage.setItem('jwt','')
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+    }
+    
+  },[setActive, setUser])
+
+  const logout = () => {
+    localStorage.setItem('jwt','')
+    setUser('Hola')
+    setActive(false)
+}
 
   return (
     <header>
@@ -20,7 +47,13 @@ export const NikeNav = (props) => {
                     <span className="list .li-nav">|</span>
                     <li className="list .li-nav"><a href="https://documenter.getpostman.com/view/17727354/UVsHSms5">Documentación</a></li>
                     <span className="list .li-nav">|</span>
-                    <li className="list .li-nav"><a href="https://github.com/gomez-julian">Perfil</a></li>
+                    <li className="list .li-nav"><p>{user}</p></li>
+    
+                    { active  ? (
+                <li className="list .li-nav"><button className="btn" onClick={logout}>Cerrar sesión</button></li>
+          ) : (
+            <li className="list .li-nav"><button className="btn" onClick={() => setShow(true)}>Iniciar sesión</button></li>
+          )}
                 </ul>
     </nav>
     
@@ -41,10 +74,6 @@ export const NikeNav = (props) => {
         <div className="right-side">
         <i className="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="search"/>
-            {/* <ul className="shop">
-                <li className=".li-nav"><a href=""><i className=" circle fa-regular fa-heart"></i></a></li>
-                <li className=".li-nav"><a href=""><i className="circle fa-solid fa-bag-shopping"></i></a></li>
-            </ul> */}
         </div>
     </div>
 </header>

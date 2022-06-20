@@ -11,15 +11,12 @@ const AddUserForm = props => {
 
 	const handleInputChange = event => {
 		const { name, value } = event.target
-
 		setUser({ ...user, [name]: value })
 	}
 
 	const onSubmitData=(event) => {
 		event.preventDefault()
-		// if (!user.name || !user.username) return
-
-		props.addUser(user)
+		props.addPayment(user)
 		setUser(initialFormState)
 	}
 
