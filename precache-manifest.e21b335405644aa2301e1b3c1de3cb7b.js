@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a1641e7afb04c5cab5da7b7d4763d05d",
+    "revision": "8d479062fe49d819587cf5ef52e5c268",
     "url": "/dsos-payment-frontend/index.html"
   },
   {
-    "revision": "d2c19ce554e4a65ccfd5",
+    "revision": "a94c241cfc6ea4b92c53",
     "url": "/dsos-payment-frontend/static/css/main.967f9c85.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/dsos-payment-frontend/static/js/2.24b9f166.chunk.js"
   },
   {
-    "revision": "d2c19ce554e4a65ccfd5",
-    "url": "/dsos-payment-frontend/static/js/main.5842b580.chunk.js"
+    "revision": "a94c241cfc6ea4b92c53",
+    "url": "/dsos-payment-frontend/static/js/main.898d9069.chunk.js"
   },
   {
     "revision": "84db57c06b413a5f39c3",

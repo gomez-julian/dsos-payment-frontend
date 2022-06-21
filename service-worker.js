@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/dsos-payment-frontend/precache-manifest.1eac4a0dccfbeb8ed0e10df26ceb781e.js"
+  "/dsos-payment-frontend/precache-manifest.e21b335405644aa2301e1b3c1de3cb7b.js"
 );
 
 self.addEventListener('message', (event) => {
