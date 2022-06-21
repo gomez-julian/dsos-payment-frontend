@@ -9,11 +9,11 @@ export const PaymentForm = (props) => {
   const { cart, setCart, toast } = props;
   const [cash, setCash] = React.useState(false);
   const [method, setMethod] = React.useState({
-    paymentMethod: "Efectivo",
+    paymentMethod: "4756499672538289",
   });
   const [tdd, setTdd] = React.useState({
-    expiry: "",
-    cvv: ""
+    expiry: "12/2022",
+    cvv: "188"
   });
   const [subtotal, setSubtotal] = React.useState(0);
   const [customers, setCustomers] = React.useState([]);
@@ -21,7 +21,7 @@ export const PaymentForm = (props) => {
 
   const defaultTDD = {
     tarjeta: {
-      numero: "4366587687284159",
+      numero: "4756499672538289",
       mesVencimiento: 12,
       anioVencimiento: 2022,
       cvv: 153,
@@ -92,17 +92,20 @@ export const PaymentForm = (props) => {
             postPayment(total, ref);
           } else{
             defaultTDD.monto = total
+            defaultTDD.tarjeta.numero = method.paymentMethod
+            defaultTDD.tarjeta.cvv = tdd.cvv
             console.log(defaultTDD)
-            // Fetch(Host.tdd, "POST", defaultTDD).then((r) => {
-            //   console.log(r)
-            //   console.log("Status POST TDD: " + r.status);
-            //   if (r.status !== 201) {
-            //     postPayment(total, ref);
-            //   } else {
-            //     toast("La verificación de la tarjeta falló");
-            //   }
-            // });
-            postPayment(total, ref);
+            Fetch(Host.tdd, "POST", defaultTDD).then((r) => {
+              console.log(defaultTDD)
+              console.log(r)
+              console.log("Status POST TDD: " + r.status);
+              if (r.status === 201) {
+                postPayment(total, ref);
+              } else {
+                toast("La verificación de la tarjeta falló");
+              }
+            });
+            // postPayment(total, ref);
           }
         }
       })

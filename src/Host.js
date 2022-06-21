@@ -17,7 +17,7 @@ const Host = {
     sales : 'https://venta-it.herokuapp.com/api/venta',
     customer : 'https://client-app-d.herokuapp.com/api/cliente/',
     auth : Auth,
-    tdd : 'https://108d-189-215-19-29.ngrok.io/api/v1/payments/',
+    tdd : 'https://tarjeta-debito-service.herokuapp.com/api/v1/payments/',
     stock : 'https://compras-deploy.herokuapp.com/api/v1/productos/vender/'
 }
 
