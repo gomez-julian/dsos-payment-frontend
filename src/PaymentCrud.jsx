@@ -6,6 +6,7 @@ import { Host } from "./Host";
 import { Fetch } from "./utilities/fetch";
 import { PaymentItem } from "./components/PaymentItem";
 import { Verify } from "./utilities/fetch";
+import { RegexCard } from "./utilities/regex";
 
 export const PaymentCrud = (props) => {
   const {toast} = props
@@ -32,6 +33,18 @@ export const PaymentCrud = (props) => {
   }, [setPayments]);
 
   const addPayment = async (data) => {
+    if(data.referenceID.length > 10){
+      toast('La referencia no puede sobrepasar 10 caracteres')
+      return;
+    }
+    if(data.paymentAmount < 1){
+      toast('Ingrese una cantidad válida')
+      return;
+    }
+    if(data.paymentMethod !== 'Efectivo' && !RegexCard(data.paymentMethod)){
+      toast('Ingrese un método de pago válido')
+      return;
+    }
     Verify()
       .then((r) => {
         if (r.status === 200) {
@@ -47,6 +60,7 @@ export const PaymentCrud = (props) => {
             .then((j) => {
               if (JSON.stringify(j).includes("paymentID")) {
                 setPayments([...payments, j]);
+                toast('Pago agregado correctamente')
               }
             });
         } else {
@@ -77,6 +91,7 @@ export const PaymentCrud = (props) => {
                 setPayments(
                   payments.filter((payment) => payment.paymentID !== paymentID)
                 );
+                toast('Pago eliminado correctamente')
               }
             });
         } else {
@@ -110,6 +125,7 @@ export const PaymentCrud = (props) => {
                     payment.paymentID === paymentID ? j : payment
                   )
                 );
+                toast('Pago actualizado correctamente')
               }
             });
         } else {
@@ -140,6 +156,7 @@ export const PaymentCrud = (props) => {
                     payment.paymentID === paymentID ? j : payment
                   )
                 );
+                toast('Se ha confirmado el pago')
               }
             });
         } else {
@@ -170,6 +187,7 @@ export const PaymentCrud = (props) => {
                     payment.paymentID === paymentID ? j : payment
                   )
                 );
+                toast('Pago cancelado')
               }
             });
         } else {

@@ -11,8 +11,8 @@ export const ToastMsg = (props) => {
   return (
     <Row>
       <Col xs={6}>
-      <ToastContainer className="p-3" position={'bottom-end'}>
-        <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
+      <ToastContainer className="p-3" position={'top-end'}>
+        <Toast onClose={() => setShow(false)} show={show} delay={10000} autohide>
           <Toast.Header>
             <img
               src="holder.js/20x20?text=%20"

@@ -2,13 +2,18 @@ import React from "react";
 import { Host } from "../Host";
 import "../styles/bootstrap.min.css";
 import "../styles/PaymentForm.css";
-import { Fetch, FetchNoCors, Verify } from "../utilities/fetch";
+import { RegexCard, RegexCVV, RegexExpiry } from "../utilities/regex";
+import { Fetch, FetchGet, Verify } from "../utilities/fetch";
 
 export const PaymentForm = (props) => {
   const { cart, setCart, toast } = props;
   const [cash, setCash] = React.useState(false);
   const [method, setMethod] = React.useState({
     paymentMethod: "Efectivo",
+  });
+  const [tdd, setTdd] = React.useState({
+    expiry: "",
+    cvv: ""
   });
   const [subtotal, setSubtotal] = React.useState(0);
   const [customers, setCustomers] = React.useState([]);
@@ -29,8 +34,9 @@ export const PaymentForm = (props) => {
     let total = 0;
     cart.map((e) => (total += e.precioVenta));
     setSubtotal(total);
-    fetch(Host.customer)
+    FetchGet(Host.customer)
       .then((r) => {
+        console.log(r)
         if (r.status === 200) {
           return r.json();
         } else {
@@ -50,12 +56,17 @@ export const PaymentForm = (props) => {
     setMethod({ ...method, [name]: value });
   };
 
+  const handleInputChangeTdd = (event) => {
+    const { name, value } = event.target;
+    setTdd({ ...tdd, [name]: value });
+  };
+
   const postSale = (total) => {
     const body = {
       rfc: rfc,
       costoTotal: total,
       cantidadPagada: total,
-      cambio: 0.1,
+      cambio: 0,
       fecha: "",
       observaciones: "Creada por Judie",
       estado: "Aprobado",
@@ -69,6 +80,7 @@ export const PaymentForm = (props) => {
           discountStock();
           return r.json();
         } else {
+          console.log(r.json())
           toast("No se ha podido hacer la venta");
           return {};
         }
@@ -80,15 +92,17 @@ export const PaymentForm = (props) => {
             postPayment(total, ref);
           } else{
             defaultTDD.monto = total
-            FetchNoCors(Host.tdd, "POST", defaultTDD).then((r) => {
-              console.log(r)
-              console.log("Status POST TDD: " + r.status);
-              if (r.status !== 201) {
-                postPayment(total, ref);
-              } else {
-                toast("La verificación de la tarjeta falló");
-              }
-            });
+            console.log(defaultTDD)
+            // Fetch(Host.tdd, "POST", defaultTDD).then((r) => {
+            //   console.log(r)
+            //   console.log("Status POST TDD: " + r.status);
+            //   if (r.status !== 201) {
+            //     postPayment(total, ref);
+            //   } else {
+            //     toast("La verificación de la tarjeta falló");
+            //   }
+            // });
+            postPayment(total, ref);
           }
         }
       })
@@ -124,6 +138,20 @@ export const PaymentForm = (props) => {
   };
 
   const pay = () => {
+    if(!cash){
+      if(!RegexCard(method.paymentMethod)){
+        toast('Ingrese un método de pago válido')
+        return;
+      }
+      if(!RegexExpiry(tdd.expiry)){
+        toast('Ingrese la fecha de expriación de la forma MM/YYYY')
+        return;
+      }
+      if(!RegexCVV(tdd.cvv)){
+        toast('Ingrese un CVV válido')
+        return;
+      }
+    }
     Verify()
       .then((r) => {
         if (r.status === 200) {
@@ -275,6 +303,9 @@ export const PaymentForm = (props) => {
                               type="text"
                               className="form-control"
                               placeholder="MM/YY"
+                              name="expiry"
+                              value={tdd.expiry}
+                              onChange={handleInputChangeTdd}
                             />
                           </div>
                         </div>
@@ -289,6 +320,9 @@ export const PaymentForm = (props) => {
                               type="text"
                               className="form-control"
                               placeholder="000"
+                              name="cvv"
+                              value={tdd.cvv}
+                              onChange={handleInputChangeTdd}
                             />
                           </div>
                         </div>

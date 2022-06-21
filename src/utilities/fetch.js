@@ -18,20 +18,14 @@ export const Fetch = async (url, method, data) => {
   return response;
 };
 
-export const FetchNoCors = async (url, method, data) => {
+export const FetchGet = async (url) => {
   const token = localStorage.getItem('jwt')
   const response = await fetch(url, {
-    method: method,
-    mode: "no-cors",
-    cache: "no-cache",
-    credentials: "same-origin",
+    method: 'GET',
     headers: {
       "Content-Type": "application/json",
       "Authorization": token
-    },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-    body: JSON.stringify(data),
+    }
   });
   return response;
 };

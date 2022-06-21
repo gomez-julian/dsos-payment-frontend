@@ -11,7 +11,7 @@ import { LoginModal } from "./components/LoginModal";
 import { PaymentCrud } from "./PaymentCrud";
 
 const App = () => {
-  const [products, setProducts] = React.useState();
+  const [products, setProducts] = React.useState([]);
   const [cart, setCart] = React.useState([]);
   const [show, setShow] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
@@ -22,14 +22,26 @@ const App = () => {
     fetch(Host.purchases)
       .then((r) => {
         if (r.status === 200) {
+          console.log(r);
           return r.json();
         } else {
           return { data: [] };
         }
       })
       .then((j) => {
-        console.log(j.data);
-        setProducts(j.data);
+        let shoes = []
+        j.data.map((e) => shoes.push({
+          "idProducto": e.idProducto,
+          "precioCompra": e.precioCompra,
+          "precioVenta": e.precioVenta,
+          "talla": e.talla,
+          "stock": e.stock,
+          "color": e.color, 
+          "marca": e.marca.nombreMarca,
+          "modelo": e.modelo.nombreModelo,     
+          }))
+        console.log(shoes);
+        setProducts(shoes);
       })
       .catch((e) => {
         console.log(e);

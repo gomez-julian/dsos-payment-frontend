@@ -37,7 +37,7 @@ export const PaymentItem = (props) => {
 
             <div>
               <dt>Referencia</dt>
-              <dd>{data.stock}</dd>
+              <dd>{data.referenceID}</dd>
             </div>
 
             <div>
