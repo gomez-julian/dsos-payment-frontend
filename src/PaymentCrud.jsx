@@ -10,21 +10,27 @@ import { RegexCard } from "./utilities/regex";
 
 export const PaymentCrud = (props) => {
   const {toast} = props
+  //COMO APARECE PRIMERAMENTE EL FORMULARIO PARA CREAR UN PAGO
   const initialFormState = {
     referenceID: "00000000",
     paymentAmount: 0,
     paymentMethod: "0000000000000000",
   };
 
+  //LISTA DE TODOS LOS PAGOS QUE EXISTEN EN LA API
   const [payments, setPayments] = useState([]);
+  //PARA SELECCIONAR QUE PAGO SE ESTA EDITANTO
   const [currentPayment, setCurrentPayment] = useState(initialFormState);
+  //DEPENDIENDO SI ES TRUE O FALSE SE MUESTRA EL FORMULARIO DE EDITAR O AGREGAR
   const [editing, setEditing] = useState(false);
 
   React.useEffect(() => {
     console.log("Renderizando PaymentCrud...");
+    //SE HACE EL FETCH PARA OBTENER TODOS LOS PAGOS
     fetch(Host.payment + "records")
       .then((res) => res.json())
       .then((data) => {
+        //SE GUARDAN LOS PAGOS
         setPayments(data);
       })
       .catch(() => {
@@ -32,7 +38,9 @@ export const PaymentCrud = (props) => {
       });
   }, [setPayments]);
 
+  //METODO PARA AGREGAR UN PAGO
   const addPayment = async (data) => {
+    //PRIMERO SE VALIDAN LAS 3 ENTRADAS, DE NO SER ASI SE COLOCA RETURN PARA QUE NO SIGA
     if(data.referenceID.length > 10){
       toast('La referencia no puede sobrepasar 10 caracteres')
       return;
@@ -45,9 +53,11 @@ export const PaymentCrud = (props) => {
       toast('Ingrese un método de pago válido')
       return;
     }
+    //SE VERIFICA LA SESIÓN
     Verify()
       .then((r) => {
         if (r.status === 200) {
+          //SI ES CORRECTA SE MANDA EL POST A LA API DE PAGOS
           console.log(data);
           Fetch(Host.payment + "pay", "POST", data)
             .then((res) => {
@@ -59,6 +69,7 @@ export const PaymentCrud = (props) => {
             })
             .then((j) => {
               if (JSON.stringify(j).includes("paymentID")) {
+                //SE AGREGA EL NUEVO PAGO A LA LISTA DE PAGOS
                 setPayments([...payments, j]);
                 toast('Pago agregado correctamente')
               }
@@ -72,10 +83,13 @@ export const PaymentCrud = (props) => {
       });
   };
 
+  //PARA ELIMINAR UNO DE LOS PAGOS
   const deletePayment = (paymentID) => {
+    //PRIMERO SE VERIFICA LA SESIÓN
     Verify()
       .then((r) => {
         if (r.status === 200) {
+          //SI ES CORRECTA SE REALIZA EL DELETE
           Fetch(Host.payment + "delete/" + paymentID, "DELETE", {})
             .then((res) => {
               console.log(res);
@@ -86,8 +100,10 @@ export const PaymentCrud = (props) => {
               }
             })
             .then((j) => {
+              //SI SE RESPONDIO CORRECTAMENTE
               if (JSON.stringify(j).includes("paymentID")) {
                 setEditing(false);
+                //SE FILTRAN LOS PAGOS Y SE ELIMINA EL PAGO QUE TENIA EL ID QUE SE ELIMINO
                 setPayments(
                   payments.filter((payment) => payment.paymentID !== paymentID)
                 );
@@ -103,13 +119,16 @@ export const PaymentCrud = (props) => {
       });
   };
 
+  //METODO PARA ACTUALIZAR UN PAGO
   const updatePayment = (paymentID, updatedPayment) => {
+    //SE VERIFICA LA SESIÓN
     Verify()
       .then((r) => {
         if (r.status === 200) {
           setEditing(false);
           const body = Object.assign({}, updatedPayment);
           delete body.paymentID;
+          //SE MANDA EL PUT CON LOS NUEVOS DATOS DEL PAGO EN EL BODY
           Fetch(Host.payment + "update/" + paymentID, "PUT", body)
             .then((res) => {
               if (res.status === 202) {
@@ -119,7 +138,9 @@ export const PaymentCrud = (props) => {
               }
             })
             .then((j) => {
+              //SI EL SERVICIO CONTESTO CORRECTAMENTE
               if (JSON.stringify(j).includes("paymentID")) {
+                //SE REEMPLAZA DENTRO DE LA LISTA DE PAGOS EL PAGO CON EL MISMO ID POR EL NUEVO
                 setPayments(
                   payments.map((payment) =>
                     payment.paymentID === paymentID ? j : payment
@@ -137,10 +158,13 @@ export const PaymentCrud = (props) => {
       });
   };
 
+  //METODO PARA CONFIRMAR EL PAGO
   const confirmPayment = (paymentID) => {
+    //SE VERIFICA LA SESIÓN
     Verify()
       .then((r) => {
         if (r.status === 200) {
+          //SI ES CORRECTA SE HACE EL PUT A LA API
           Fetch(Host.payment + "confirm/" + paymentID, "PUT", {})
             .then((res) => {
               if (res.status === 202) {
@@ -151,6 +175,8 @@ export const PaymentCrud = (props) => {
             })
             .then((j) => {
               if (JSON.stringify(j).includes("paymentID")) {
+                //SI LA RESPUESTA DE LA API ES BUENA, SE REEMPLAZA EL PAGO QUE SE TENIA EN LA
+                //LISTA POR EL NUEVO PARA QUE TENGA LOS NUEVO DATOS
                 setPayments(
                   payments.map((payment) =>
                     payment.paymentID === paymentID ? j : payment
@@ -168,6 +194,7 @@ export const PaymentCrud = (props) => {
       });
   };
 
+  //CANCELAR ES LO MISMO QUE CONFIRMAR PERO EN VEZ DE CONFIRMAR CANCELAS XDD
   const cancelPayment = (paymentID) => {
     Verify()
       .then((r) => {
@@ -199,9 +226,12 @@ export const PaymentCrud = (props) => {
       });
   };
 
+  //PARA QUE CUANDO SE DE EDITAR A UN PAGO
   const editRow = (payment) => {
+    //APAREZCA EL FORMULARIO DE ACTUALIZAR
     setEditing(true);
 
+    //Y LA INFORMACIÓN DEL PAGO ACTUAL CAMBIE
     setCurrentPayment({
       paymentID: payment.paymentID,
       referenceID: payment.referenceID,
@@ -239,6 +269,7 @@ export const PaymentCrud = (props) => {
         </div>
         <div className="flex-large">
           {payments.map((pay) => (
+            //POR CADA PAGO SE MAPEA UNO DE ESTOS COMPONENTES, QUE TIENE LA INFROMACION Y LOS BOTONES
             <PaymentItem
               key={pay.paymentId}
               data={pay}

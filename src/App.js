@@ -11,14 +11,21 @@ import { LoginModal } from "./components/LoginModal";
 import { PaymentCrud } from "./PaymentCrud";
 
 const App = () => {
+  //TODOS LOS ZAPATOS QUE COMPRAS
   const [products, setProducts] = React.useState([]);
+  //EL CARRITO DE COMPRAS
   const [cart, setCart] = React.useState([]);
+  //MOSTRAR LA NOTIFICACION
   const [show, setShow] = React.useState(false);
+  //MOSTRAR LA VENTANA DE LOGIN
   const [showModal, setShowModal] = React.useState(false);
+  //EL USUARIO ESTA LOGEADO
   const [active, setActive] = React.useState(false);
+  //MENSAJE DE LA NOTIFICACION
   const [toastMsg, setToastMsg] = React.useState('Mensaje del Toast');
 
   React.useEffect(() => {
+    //AL CREARSE EL COMPONENTE SE OBTIENEN LOS ZAPATOS
     fetch(Host.purchases)
       .then((r) => {
         if (r.status === 200) {
@@ -30,6 +37,7 @@ const App = () => {
       })
       .then((j) => {
         let shoes = []
+        //SE HACE PUSH A LOS ZAPATOS POR CADA UNO DE LOS ZAPATOS QUE SE OBTUVIERON
         j.data.map((e) => shoes.push({
           "idProducto": e.idProducto,
           "precioCompra": e.precioCompra,
@@ -54,6 +62,8 @@ const App = () => {
   }
 
   return (
+    //ROUTER ES TODA LA APLICACION
+    //ROUTE ES CADA UNA DE LAS RUTAS QUE PUEDE (CADA PAGINA PUES XD)
     <><Router>
       <NikeNav cart={cart} setShow={setShowModal} active={active} setActive={setActive}/>
       <Routes>

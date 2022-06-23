@@ -7,18 +7,24 @@ import { Fetch, FetchGet, Verify } from "../utilities/fetch";
 
 export const PaymentForm = (props) => {
   const { cart, setCart, toast } = props;
+  //SI SE VA A USAR EFECTIVO O NO
   const [cash, setCash] = React.useState(false);
+  //MEOTODO DE PAGO POR DEFAULT
   const [method, setMethod] = React.useState({
     paymentMethod: "4756499672538289",
   });
+  //PARA LA VERIFICACION DE LA TARJETA DE CREDITO
   const [tdd, setTdd] = React.useState({
     expiry: "12/2022",
-    cvv: "188"
+    cvv: "188",
   });
+  //SUBTOTAL DE LA COMPRA
   const [subtotal, setSubtotal] = React.useState(0);
+  //LISTA DE CLIENTES A LOS QUE SE LES PUEDE REGISTRAR UNA VENTA
   const [customers, setCustomers] = React.useState([]);
   const [rfc, setRfc] = React.useState("X");
 
+  //PARA EL SERVICIO DE TARJETA, UNA BASE POR DEFAULT
   const defaultTDD = {
     tarjeta: {
       numero: "4756499672538289",
@@ -31,12 +37,14 @@ export const PaymentForm = (props) => {
 
   React.useEffect(() => {
     console.log("Renderizando PaymentForm...");
+    //AL CREARSE SE CALCULA EL TOTAL A PAGAR
     let total = 0;
     cart.map((e) => (total += e.precioVenta));
     setSubtotal(total);
+    //SE OBTIENEN LOS CLIENTES 
     FetchGet(Host.customer)
       .then((r) => {
-        console.log(r)
+        console.log(r);
         if (r.status === 200) {
           return r.json();
         } else {
@@ -44,6 +52,7 @@ export const PaymentForm = (props) => {
         }
       })
       .then((j) => {
+        //SE GUARDAN LOS CLIENTES
         setCustomers(j.data);
       })
       .catch((e) => {
@@ -51,16 +60,19 @@ export const PaymentForm = (props) => {
       });
   }, [setSubtotal, setCustomers, cart]);
 
+  //PARA CONTROLAR LOS CAMBIOS EN LOS INPUTS
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setMethod({ ...method, [name]: value });
   };
 
+  //PARA CONTROLAR LOS CAMBIOS EN LOS INPUTS DE CVV Y FECHA
   const handleInputChangeTdd = (event) => {
     const { name, value } = event.target;
     setTdd({ ...tdd, [name]: value });
   };
 
+  //NO SE UTILIZA POR EL MOMENTO PARA NO TRONAR EL SERVICIO DE ELLOS
   const postSale = (total) => {
     const body = {
       rfc: rfc,
@@ -77,27 +89,36 @@ export const PaymentForm = (props) => {
       .then((r) => {
         console.log("Status POST sales: " + r.status + cash);
         if (r.status === 201) {
-          discountStock();
+          // discountStock();
           return r.json();
         } else {
-          console.log(r.json())
+          console.log(r.json());
           toast("No se ha podido hacer la venta");
           return {};
         }
       })
       .then((j) => {
         if (JSON.stringify(j).includes("data")) {
-          const ref = j.data[0];
-          if(cash){
+          const ref = j.data[1];
+          cart.map((e) =>
+            Fetch(Host.sales + "/" + ref + "/ventadetalle", "POST", {
+              cantidadProducto: 1,
+              costoUnitario: e.precioVenta,
+              costoTotal: e.precioVenta,
+              estatusDelete: true,
+              idProducto: e.idProducto,
+            })
+          );
+          if (cash) {
             postPayment(total, ref);
-          } else{
-            defaultTDD.monto = total
-            defaultTDD.tarjeta.numero = method.paymentMethod
-            defaultTDD.tarjeta.cvv = tdd.cvv
-            console.log(defaultTDD)
+          } else {
+            defaultTDD.monto = total;
+            defaultTDD.tarjeta.numero = method.paymentMethod;
+            defaultTDD.tarjeta.cvv = tdd.cvv;
+            console.log(defaultTDD);
             Fetch(Host.tdd, "POST", defaultTDD).then((r) => {
-              console.log(defaultTDD)
-              console.log(r)
+              console.log(defaultTDD);
+              console.log(r);
               console.log("Status POST TDD: " + r.status);
               if (r.status === 201) {
                 postPayment(total, ref);
@@ -114,19 +135,24 @@ export const PaymentForm = (props) => {
       });
   };
 
+  //METODO PARA REALIZAR EL PAGO A LA API
   const postPayment = (total, reference) => {
+    //SE CREA EL CUERPO DE LA SOLICITUD
     const body = {
       ...method,
-      referenceID: reference,
+      saleID: reference,
       paymentAmount: total,
     };
+    //SI ES EN EFECTIVO SE CAMBIA EL METODO DE PAGO
     if (cash) {
       body.paymentMethod = "Efectivo";
     }
     console.log(body);
+    //SE REALIZA EL POST A LOS PAGOS
     Fetch(Host.payment + "pay", "POST", body)
       .then((r) => {
         console.log("Status POST payment: " + r.status);
+        //SI SE COMPLETA SE MANDA EL MENSAJE Y SE VACIA EL CARRITO
         if (r.status === 201) {
           toast("La venta se completó exitosamente");
           setCart([]);
@@ -140,29 +166,62 @@ export const PaymentForm = (props) => {
       });
   };
 
+  //METODO AL MOMENTO DE DAR CLIC EN PAGAR
   const pay = () => {
-    if(!cash){
-      if(!RegexCard(method.paymentMethod)){
-        toast('Ingrese un método de pago válido')
+    //SI NO ES EFECTIVO VALIDA EL NUMERO DE TARJETA, FECHA Y CVV CON EXPRESIONES REGULARES
+    if (!cash) {
+      if (!RegexCard(method.paymentMethod)) {
+        toast("Ingrese un método de pago válido");
         return;
       }
-      if(!RegexExpiry(tdd.expiry)){
-        toast('Ingrese la fecha de expriación de la forma MM/YYYY')
+      if (!RegexExpiry(tdd.expiry)) {
+        toast("Ingrese la fecha de expriación de la forma MM/YYYY");
         return;
       }
-      if(!RegexCVV(tdd.cvv)){
-        toast('Ingrese un CVV válido')
+      if (!RegexCVV(tdd.cvv)) {
+        toast("Ingrese un CVV válido");
         return;
       }
     }
+    //SE VERIFICA SI LA SESIÓN ES VALDIA
     Verify()
       .then((r) => {
+        //SI ES VALIDA
         if (r.status === 200) {
+          //SE CREA UN ID RANDOM PARA REGISTRAR EL ID DE LA VENTA EN PAGOS
+          const ref = Math.floor(Math.random()*50);
           console.log("Verificado");
+          //SE CALCULA EL TOTAL
           let total = 0;
           cart.map((e) => (total += e.precioVenta));
           if (total !== 0) {
-            postSale(total);
+            //SI ES MAS QUE CERO REALIZA EL DESCUENTO DE PRODUCTOS
+            // postSale(total);
+            discountStock();
+            if (cash) {
+              //SI ES EFECTIVO REALIZA DIRECTAMENTE EL PAGO
+              postPayment(total, ref);
+            } else {
+              //SI ES POR TARJETA PRIMERO SE REALIZA LA VERIFICACION DE LA TARJETA
+              //CON EL API DEL PROFE
+              defaultTDD.monto = total;
+              defaultTDD.tarjeta.numero = method.paymentMethod;
+              defaultTDD.tarjeta.cvv = tdd.cvv;
+              console.log(defaultTDD);
+              //SE HACE EL POST A LA TARJETA DE CREDITO
+              Fetch(Host.tdd, "POST", defaultTDD).then((r) => {
+                console.log(defaultTDD);
+                console.log(r);
+                console.log("Status POST TDD: " + r.status);
+                if (r.status === 201) {
+                  //SI FUE ACEPTADA SE REALIZA EL PAGO EN NUESTRA API
+                  postPayment(total, ref);
+                } else {
+                  toast("La verificación de la tarjeta falló");
+                }
+              });
+              // postPayment(total, ref);
+            }
           } else {
             toast("No hay productos en el carrito");
           }
@@ -176,15 +235,16 @@ export const PaymentForm = (props) => {
   };
 
   const discountStock = () => {
-    cart.map((e)=>{
-      console.log(`${Host.stock}${e.idProducto}/1`)
-      Fetch(`${Host.stock}${e.idProducto}/1`, "PUT", {})
-      .catch((e) => {
+    cart.map((e) => {
+      //POR CADA UNO DE LOS PRODUTOS EN EL CARRITO SE HACE EL DESCUENTO
+      console.log(`${Host.stock}${e.idProducto}/1`);
+      Fetch(`${Host.stock}${e.idProducto}/1`, "PUT", {}).catch((e) => {
         console.log(e);
       });
-    })
+    });
   };
 
+  //PARA CONTROLAR A QUE RFC DE QUE CLIENTE SE VA A REFERENCIAR LA VENTA (POR EL MOMENTO NO SE USA)
   const opcionChange = (e) => {
     setRfc(e.target.value);
   };
