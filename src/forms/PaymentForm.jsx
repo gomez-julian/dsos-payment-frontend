@@ -12,6 +12,7 @@ export const PaymentForm = (props) => {
   //MEOTODO DE PAGO POR DEFAULT
   const [method, setMethod] = React.useState({
     paymentMethod: "4756499672538289",
+    descuento: 0
   });
   //PARA LA VERIFICACION DE LA TARJETA DE CREDITO
   const [tdd, setTdd] = React.useState({
@@ -440,6 +441,13 @@ export const PaymentForm = (props) => {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="input-group mb-3">
+                <span className="font-weight-normal card-text">
+                           Descuento (%)
+                          </span>
+                      <input className="form-control" type="number" max={100} min={0} value={method.descuento}
+                      onChange={handleInputChange} name="descuento"/>
                 </div>
               </div>
 

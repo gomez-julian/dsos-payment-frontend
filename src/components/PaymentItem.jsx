@@ -22,7 +22,7 @@ export const PaymentItem = (props) => {
               />
             </span>
             <p>
-              <strong>Pago #{data.paymentID} - ${data.paymentAmount}</strong>
+              <strong>Pago #{data.paymentID} - ${data.paymentAmount} -{data.descuento}%</strong>
               <small>Clic para ver los detalles</small>
             </p>
             <span>Status: {data.paymentStatus}</span>
